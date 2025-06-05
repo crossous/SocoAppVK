@@ -285,14 +285,14 @@ std::unique_ptr<Shader> Shader::LoadFromFile(Device* device, const std::wstring 
 							auto findBindingRangeIte = currentSetRange->find(registerType);
 							if(findBindingRangeIte == currentSetRange->end())
 							{
-								MinMaxRange newRange = std::make_pair(binding->binding, binding->binding);
+								MinMaxRange newRange = std::make_pair(binding->binding, binding->binding + binding->count - 1);
 								currentSetRange->insert(std::make_pair(registerType, newRange));
 							}
 							else
 							{
 								MinMaxRange currentRange = findBindingRangeIte->second;
 								currentRange.first = std::min(currentRange.first, static_cast<uint16_t>(binding->binding));
-								currentRange.second = std::max(currentRange.second, static_cast<uint16_t>(binding->binding));
+								currentRange.second = std::max(currentRange.second, static_cast<uint16_t>(binding->binding + binding->count - 1));
 								findBindingRangeIte->second = currentRange;
 							}
 						}

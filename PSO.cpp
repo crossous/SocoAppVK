@@ -22,9 +22,6 @@ void PSO::Init(VkDevice device, const Shader& shader, const Mesh& mesh, const Vk
 	SetupDynamicState(pipelineInfo);
 
 	ThrowIfFailed(vkCreateGraphicsPipelines(mDevice, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &mGraphicsPipeline));
-
-	int i = 1 + 1;
-	int i2 = i + i;
 }
 
 void PSO::Clear()

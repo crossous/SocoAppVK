@@ -151,8 +151,10 @@
     <ClCompile Include="inc\SPIRV-Reflect\spirv_reflect.c" />
     <ClCompile Include="inc\vk_format_utils.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="PSO.cpp" />
+    <ClCompile Include="RenderObject.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SystemInfo.cpp" />
     <ClCompile Include="VulkanApp.cpp" />
@@ -161,6 +163,7 @@
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="CommandQueue.h" />
     <ClInclude Include="ConstantBuffer.hpp" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="PipelineLayoutPool.hpp" />
     <ClInclude Include="Device.hpp" />
     <ClInclude Include="DeviceComponent.h" />
@@ -169,6 +172,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="PSO.h" />
     <ClInclude Include="QueueFamilyIndices.hpp" />
+    <ClInclude Include="RenderObject.h" />
     <ClInclude Include="SamplerPool.hpp" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Singleton.h" />

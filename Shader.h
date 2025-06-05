@@ -9,14 +9,14 @@
 #include <spirv_reflect.h>
 
 
-enum class ShaderStage: int
-{
-	VS,
-	PS,
-	DS,
-	HS,
-	GS
-};
+// enum class ShaderStage: int
+// {
+// 	VS,
+// 	PS,
+// 	DS,
+// 	HS,
+// 	GS
+// };
 
 struct ShaderEntry
 {
@@ -41,6 +41,7 @@ public:
 
 	static bool IsPipelineLayoutEqual(const Shader& a, const Shader& b);
 
+	//SetIndex, BindingIndex
 	using BindingPoint = std::pair<uint32_t, uint32_t>;
 	BindingPoint GetBindingPoint(const std::string bufferName) const;
 

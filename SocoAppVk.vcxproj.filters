@@ -24,9 +24,6 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="VulkanApp.cpp">
-      <Filter>资源文件</Filter>
-    </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -43,6 +40,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="SystemInfo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanApp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

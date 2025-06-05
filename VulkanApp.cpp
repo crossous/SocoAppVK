@@ -69,7 +69,7 @@ namespace Soco {
 		if (mEnableValidationLayers)
 			extensions[glfwExtensionCount] = VK_EXT_DEBUG_REPORT_EXTENSION_NAME;
 
-		//²éÑ¯ËùÓÐÍØÕ¹
+		//æŸ¥è¯¢æ‰€æœ‰æ‹“å±•
 		{
 			uint32_t extensionCount = 0;
 			ThrowIfFailed(vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr));
@@ -413,7 +413,8 @@ namespace Soco {
 
 		VkDescriptorPoolSize poolSizes[] = { 
 			{.type{VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER}, .descriptorCount{1000}},
-			{.type{VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE}, .descriptorCount{1000}}
+			{.type{VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE}, .descriptorCount{1000}},
+			{.type{VK_DESCRIPTOR_TYPE_SAMPLER}, .descriptorCount{1000}}
 		};
 		VkDescriptorPoolCreateInfo poolInfo{ 
 			.sType{VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO}, 
@@ -472,8 +473,8 @@ namespace Soco {
 		VkCommandBufferAllocateInfo allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		allocInfo.commandPool = mDevice.GetGraphicsCommandPool();
-		//VK_COMMAND_BUFFER_LEVEL_PRIMARY: ¿ÉÒÔÌá½»µ½¶ÓÁÐÖ´ÐÐ£¬µ«²»ÄÜ´ÓÆäËûµÄÃüÁî»º³åÇøµ÷ÓÃ¡£
-		//VK_COMMAND_BUFFER_LEVEL_SECONDARY : ÎÞ·¨Ö±½ÓÌá½»£¬µ«ÊÇ¿ÉÒÔ´ÓÖ÷ÃüÁî»º³åÇøµ÷ÓÃ¡£
+		//VK_COMMAND_BUFFER_LEVEL_PRIMARY: å¯ä»¥æäº¤åˆ°é˜Ÿåˆ—æ‰§è¡Œï¼Œä½†ä¸èƒ½ä»Žå…¶ä»–çš„å‘½ä»¤ç¼“å†²åŒºè°ƒç”¨ã€‚
+		//VK_COMMAND_BUFFER_LEVEL_SECONDARY : æ— æ³•ç›´æŽ¥æäº¤ï¼Œä½†æ˜¯å¯ä»¥ä»Žä¸»å‘½ä»¤ç¼“å†²åŒºè°ƒç”¨ã€‚
 		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 		allocInfo.commandBufferCount = (uint32_t)mCommandBuffers.size();
 
@@ -567,8 +568,8 @@ namespace Soco {
 		mCamera = std::make_unique<Camera>(&mDevice);
 
 		Transform* cameraTransform = mCamera->GetTransform();
-		cameraTransform->SetLocalPosition(glm::vec3(0, 0, 5));
-		cameraTransform->SetLocalRotation(glm::quat(glm::vec3(0, glm::radians(180.0f), 0)));
+		cameraTransform->SetLocalPosition(glm::vec3(0, 0, -5));
+		//cameraTransform->SetLocalRotation(glm::quat(glm::vec3(0, glm::radians(180.0f), 0)));
 
 		mCamera->SetFov(glm::radians(90.0f));
 		mCamera->SetAspect((float)mWidth / (float)mHeight);
@@ -676,10 +677,19 @@ namespace Soco {
 
 	void TriangleApp::OnUpdate()
 	{
-		Transform& triangleTransform = mTransforms["Triangle"];
-		glm::quat triangleRotation = triangleTransform.GetLocalRotation();
-		triangleRotation *= glm::quat(glm::vec3(0, 0, glm::radians(5.0f)));
-		triangleTransform.SetLocalRotation(triangleRotation);
+		// Transform& triangleTransform = mTransforms["Triangle"];
+		// glm::quat triangleRotation = triangleTransform.GetLocalRotation();
+		// triangleRotation *= glm::quat(glm::vec3(0, 0, glm::radians(5.0f)));
+		// triangleTransform.SetLocalRotation(triangleRotation);
+
+		static bool cameraToLeft = true;
+		Transform* cameraTransform = mCamera->GetTransform();
+		glm::vec3 cameraPos = cameraTransform->GetLocalPosition();
+		cameraPos.x += 0.1f * (cameraToLeft ? -1 : 1);
+		cameraTransform->SetLocalPosition(cameraPos);
+
+		if (glm::abs(cameraPos).x > 5)
+			cameraToLeft = !cameraToLeft;
 	}
 
 	void TriangleApp::OnUpload()
@@ -748,9 +758,9 @@ namespace Soco {
 		VkCommandBufferBeginInfo cmdBeginInfo = {};
 		cmdBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
-		//VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT: ÃüÁî»º³åÇø½«ÔÚÖ´ÐÐÒ»´ÎºóÁ¢¼´ÖØÐÂ¼ÇÂ¼¡£
-		//VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT : ÕâÊÇÒ»¸ö¸¨Öú»º³åÇø£¬ËüÏÞÖÆÔÚÔÚÒ»¸öäÖÈ¾Í¨µÀÖÐ¡£
-		//VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT : ÃüÁî»º³åÇøÒ²¿ÉÒÔÖØÐÂÌá½»£¬Í¬Ê±ËüÒ²ÔÚµÈ´ýÖ´ÐÐ¡£
+		//VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT: å‘½ä»¤ç¼“å†²åŒºå°†åœ¨æ‰§è¡Œä¸€æ¬¡åŽç«‹å³é‡æ–°è®°å½•ã€‚
+		//VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT : è¿™æ˜¯ä¸€ä¸ªè¾…åŠ©ç¼“å†²åŒºï¼Œå®ƒé™åˆ¶åœ¨åœ¨ä¸€ä¸ªæ¸²æŸ“é€šé“ä¸­ã€‚
+		//VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT : å‘½ä»¤ç¼“å†²åŒºä¹Ÿå¯ä»¥é‡æ–°æäº¤ï¼ŒåŒæ—¶å®ƒä¹Ÿåœ¨ç­‰å¾…æ‰§è¡Œã€‚
 		cmdBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 		cmdBeginInfo.pInheritanceInfo = nullptr; // Optional
 

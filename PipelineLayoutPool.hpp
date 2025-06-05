@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "dxUtil.hpp"
 #include "SamplerPool.hpp"
@@ -48,6 +48,13 @@ struct DescriptorSetLayoutBindingDesc
 	}
 
 	std::strong_ordering operator<=>(const DescriptorSetLayoutBindingDesc&) const = default;
+	// bool operator==(const DescriptorSetLayoutBindingDesc& rhs) const
+	// {
+	// 	return this->binding != rhs.binding
+	// 		&& this->descriptorType != rhs.descriptorType
+	// 		&& this->descriptorCount != rhs.descriptorCount
+	// 		&& this->stageFlags != rhs.stageFlags;
+	// }
 };
 
 template<>
@@ -58,6 +65,7 @@ struct std::hash<DescriptorSetLayoutBindingDesc>
 		using DescriptorTypeUnderlyingType = std::underlying_type_t<VkDescriptorType>;
 
 		std::size_t res = std::hash<uint32_t>()(key.binding);
+		//res ^= std::hash<std::string>()(key.name);
 		res ^= std::hash<DescriptorTypeUnderlyingType>()(key.descriptorType) << 1;
 		res <<= 1;
 		res ^= std::hash<uint32_t>()(key.descriptorCount) >> 1;
@@ -72,7 +80,7 @@ struct std::hash<DescriptorSetLayoutBindingDesc>
 };
 
 //auto generator compare use <=> operator
-//ÓÃ<=>²Ù×÷·û×Ô¶¯Éú³É±È½Ï
+//ç”¨<=>æ“ä½œç¬¦è‡ªåŠ¨ç”Ÿæˆæ¯”è¾ƒ
 //template<>
 //struct std::equal_to<DescriptorSetLayoutBindingDesc>
 //{
@@ -133,7 +141,7 @@ struct DescriptorSetLayoutDesc
 		{
 			for (int bindingIndex = 0; bindingIndex < pBindings.size(); ++bindingIndex)
 			{
-				if (std::equal_to<DescriptorSetLayoutBindingDesc>()(pBindings[bindingIndex], rhs.pBindings[bindingIndex]))
+				if (!std::equal_to<DescriptorSetLayoutBindingDesc>()(pBindings[bindingIndex], rhs.pBindings[bindingIndex]))
 					return false;
 			}
 		}
@@ -159,7 +167,7 @@ struct std::hash<DescriptorSetLayoutDesc>
 };
 
 // can not compile std::unordered_map<std::vector<DescriptorSetLayoutDesc>, value>
-// ¶¨Òåequal_toÎŞ·¨Ê¹vector<DescriptorSetLayoutDesc>×÷Îªunordered_mapµÄkeyÍ¨¹ı±àÒë£¬Ö»ÓĞoperator==¿ÉÒÔ
+// å®šä¹‰equal_toæ— æ³•ä½¿vector<DescriptorSetLayoutDesc>ä½œä¸ºunordered_mapçš„keyé€šè¿‡ç¼–è¯‘ï¼Œåªæœ‰operator==å¯ä»¥
 //template<>
 //struct std::equal_to<DescriptorSetLayoutDesc>
 //{
@@ -280,6 +288,7 @@ public:
 			setLayouts.resize(setLayoutDescs.size());
 			for (int setIndex = 0; setIndex < setLayoutDescs.size(); ++setIndex)
 			{
+				//TODO: there hash calc has problem
 				setLayouts[setIndex] = mDescriptorSetLayoutPool.Get(setLayoutDescs[setIndex]);
 			}
 

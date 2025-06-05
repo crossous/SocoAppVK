@@ -31,7 +31,7 @@ struct VertexAttributeDesc
 
 
 
-//Mesh只提供Vertex Attribute在顶点数据中的偏移，不保证精度和Component数量
+//Mesh鍙彁渚沄ertex Attribute鍦ㄩ《鐐规暟鎹腑鐨勫亸绉伙紝涓嶄繚璇佺簿搴﹀拰Component鏁伴噺
 class Mesh : public DeviceComponent
 {
 public:
@@ -87,11 +87,12 @@ struct Vertex
 	float color[3];
 };
 
-//特化的网格体
+//鐗瑰寲鐨勭綉鏍间綋
 class FormatMesh : public Mesh
 {
 public:
 	static std::unique_ptr<FormatMesh> CreateTriangle(Device* device);
+	static std::unique_ptr<FormatMesh> CreatePlane(Device* device);
 	Vertex& GetVertex(int i);
 private:
 	FormatMesh(Device* device) : Mesh(device) {}

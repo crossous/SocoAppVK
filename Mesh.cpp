@@ -279,16 +279,16 @@ std::unique_ptr<FormatMesh> FormatMesh::CreateTriangle(Device* device)
 
 	Vertex vertices[3] =
 	{
-		{{0.0f, -0.5f, 0.0f}, {0.0f, 0.0f, -1.0f}, {1.0f, 0.0f, 0.0f, 0.0f}, {0.5f, 0.0f}, {0.0f, 0.0f}, {1.0, 0.0, 0.0}},
-		{{0.5f, 0.5f, 0.0f,}, {0.0f, 0.0f, -1.0f}, {1.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 1.0f}, {0.0f, 0.0f}, {0.0, 1.0, 0.0}},
-		{{-0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, -1.0f}, {1.0f, 0.0f, 0.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 0.0f}, {0.0, 0.0, 1.0}},
+		{{-0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 0.0f}, {0.0, 0.0, 1.0}},
+		{{0.5f, 0.5f, 0.0f,}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 1.0f}, {0.0f, 0.0f}, {0.0, 1.0, 0.0}},
+		{{0.0f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f, 0.0f}, {0.5f, 0.0f}, {0.0f, 0.0f}, {1.0, 0.0, 0.0}},
 	};
 
 	res->mVertexDatas.resize(1);
 	res->mVertexDatas[0].resize(sizeof(vertices));
 
 	memcpy(res->mVertexDatas[0].data(), vertices, sizeof(vertices));
-	res->mVertexCount = 3;
+	res->mVertexCount = _countof(vertices);;
 
 	//indices
 	uint32_t indices[3] = { 0, 1, 2 };
@@ -311,7 +311,56 @@ std::unique_ptr<FormatMesh> FormatMesh::CreateTriangle(Device* device)
 	res->mAttributes.insert({ "COLOR", VK_FORMAT_R32G32B32_SFLOAT, 56, 0 });
 
 	SubmeshGeometry submesh;
-	submesh.IndexCount = 3;
+	submesh.IndexCount = _countof(indices);
+	submesh.StartIndexLocation = 0;
+	submesh.BaseVertexLocation = 0;
+	res->mSubmeshes.push_back(submesh);
+
+	res->BuildBuffer();
+
+	return res;
+}
+
+std::unique_ptr<FormatMesh> FormatMesh::CreatePlane(Device* device)
+{
+	std::unique_ptr<FormatMesh> res(new FormatMesh(device));
+
+	Vertex vertices[4] =
+	{
+		{{-0.5f, 0.0f, 0.5f,}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}, {0.0f, 0.0f}, {0.0, 0.0, 0.0}},
+		{{0.5f, 0.0f, 0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f, 0.0f}, {1.0f, 0.0f}, {0.0f, 0.0f}, {1.0, 0.0, 0.0}},
+		{{-0.5f, 0.0f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 1.0f}, {0.0f, 0.0f}, {0.0, 1.0, 0.0}},
+		{{0.5f, 0.0f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 0.0f}, {1, 1, 0.0}},
+	};
+
+	res->mVertexDatas.resize(1);
+	res->mVertexDatas[0].resize(sizeof(vertices));
+
+	memcpy(res->mVertexDatas[0].data(), vertices, sizeof(vertices));
+	res->mVertexCount = _countof(vertices);
+
+	//indices
+	uint32_t indices[6] = { 0, 1, 2, 1, 3, 2 };
+	res->mIndices32.resize(_countof(indices));
+	memcpy(res->mIndices32.data(), indices, sizeof(indices));
+
+	res->mIndices16.resize(res->mIndices32.size());
+	for (int i = 0; i < res->mIndices32.size(); ++i)
+	{
+		res->mIndices16[i] = static_cast<uint16_t>(res->mIndices32[i]);
+	}
+
+	res->bIndex32 = false;
+
+	res->mAttributes.insert({ "POSITION", VK_FORMAT_R32G32B32_SFLOAT, 0, 0 });
+	res->mAttributes.insert({ "NORMAL", VK_FORMAT_R32G32B32_SFLOAT, 12, 0 });
+	res->mAttributes.insert({ "TANGENT", VK_FORMAT_R32G32B32A32_SFLOAT, 24, 0 });
+	res->mAttributes.insert({ "TEXCOORD", VK_FORMAT_R32G32_SFLOAT, 40, 0 });
+	res->mAttributes.insert({ "TEXCOORD1", VK_FORMAT_R32G32_SFLOAT, 48, 0 });
+	res->mAttributes.insert({ "COLOR", VK_FORMAT_R32G32B32_SFLOAT, 56, 0 });
+
+	SubmeshGeometry submesh;
+	submesh.IndexCount = _countof(indices);
 	submesh.StartIndexLocation = 0;
 	submesh.BaseVertexLocation = 0;
 	res->mSubmeshes.push_back(submesh);

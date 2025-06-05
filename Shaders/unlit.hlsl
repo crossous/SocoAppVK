@@ -1,26 +1,26 @@
-[[vk::binding(0, 0)]]
+// [[vk::binding(0, 0)]]
 cbuffer PerCamera : register(b0)
 {
 	float4x4 WorldToClipMatrix;
 }
 
-[[vk::binding(1, 0)]]
+// [[vk::binding(1, 0)]]
 cbuffer PerMaterial : register(b1, space2)
 {
     float4 _MainTex_ST;
     float4 _Color;
 }
 
-[[vk::binding(2, 0)]]
-cbuffer PerObject : register(b2, space3)
+// [[vk::binding(2, 0)]]
+cbuffer PerObject : register(b2, space5)
 {
 	float4x4 ObjectToWorldMatrix;
 	float4x4 WorldToObjectMatrix;
 }
 
-[[vk::binding(0, 1)]]
+//[[vk::binding(0, 1)]]
 Texture2D _MainTex : register(t0);
-[[vk::binding(0, 2)]]
+//[[vk::binding(0, 3)]]
 SamplerState gsamLinearWrapAniso2[3] : register(s0);
 
 struct Attributes
@@ -58,7 +58,7 @@ Varyings vert(Attributes input)
 
 float4 frag(Varyings input) : SV_TARGET
 {
-    return float4(input.color, 1);
-    //float4 color = _MainTex.Sample(gsamLinearWrapAniso2[0], input.uv);
-    //return float4(color.rgb * input.color * _Color.rgb, 1);
+    //return float4(input.color, 1);
+    float4 color = _MainTex.Sample(gsamLinearWrapAniso2[0], input.uv);
+    return float4(color.rgb * input.color * _Color.rgb + 0.5f, 1);
 }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   

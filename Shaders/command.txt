@@ -1,0 +1,2 @@
+dxc D:\Project\VK\SocoAppVK\Shaders\unlit.hlsl -E frag -T ps_6_0 -spirv -Fo D:\Project\VK\SocoAppVK\Shaders\unlit_ps.spv -fvk-t-shift 0 1 -fvk-s-shift 0 2
+dxc -spirv -fvk-b-shift 10 0 -fvk-t-shift 20 0 -fvk-s-shift 30 0 -fvk-u-shift 40 0 -T ps_6_0 -E psmain -Fo D:\Project\VK\SocoAppVK\Shaders\reg_shift.ps.spv D:\Project\VK\SocoAppVK\Shaders\reg_shift.hlsl

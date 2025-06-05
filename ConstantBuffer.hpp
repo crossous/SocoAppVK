@@ -33,16 +33,16 @@ public:
 
 		ThrowIfFailed(vkAllocateMemory(mDevice->GetDevice(), &allocInfo, nullptr, &mHostVisibleBufferMemory));
 		ThrowIfFailed(vkBindBufferMemory(mDevice->GetDevice(), mHostVisibleBuffer, mHostVisibleBufferMemory, 0));
+		ThrowIfFailed(vkMapMemory(mDevice->GetDevice(), mHostVisibleBufferMemory, 0, mBufferSize, 0, &mData));
 	}
 
 	void UpdateBuffer(void* copyData)
 	{
-		void* data;
-		ThrowIfFailed(vkMapMemory(mDevice->GetDevice(), mHostVisibleBufferMemory, 0, mBufferSize, 0, &data));
-
-		memcpy(data, copyData, mBufferSize);
-
-		vkUnmapMemory(mDevice->GetDevice(), mHostVisibleBufferMemory);
+		//void* data;
+		
+		//ThrowIfFailed(vkMapMemory(mDevice->GetDevice(), mHostVisibleBufferMemory, 0, mBufferSize, 0, &mData));
+		memcpy(mData, copyData, mBufferSize);
+		//vkUnmapMemory(mDevice->GetDevice(), mHostVisibleBufferMemory);
 	}
 
 	void ClearBuffer()
@@ -65,6 +65,7 @@ public:
 	}
 
 private:
+	void* mData;
 	uint32_t mBufferSize = 0;
 	VkBuffer mHostVisibleBuffer = VK_NULL_HANDLE;
 	VkDeviceMemory mHostVisibleBufferMemory = VK_NULL_HANDLE;
